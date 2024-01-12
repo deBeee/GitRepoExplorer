@@ -1,7 +1,9 @@
 package com.example.gitrepoexplorer.infrastructure.error;
 
 import com.example.gitrepoexplorer.infrastructure.controller.GitRepoController;
+import com.example.gitrepoexplorer.infrastructure.error.dto.RepositoryNotFoundExceptionDto;
 import com.example.gitrepoexplorer.infrastructure.error.dto.UnsupportedMediaTypeErrorDto;
+import com.example.gitrepoexplorer.infrastructure.error.exceptions.RepositoryNotFoundException;
 import com.example.gitrepoexplorer.infrastructure.error.exceptions.UnsupportedMediaTypeException;
 import com.example.gitrepoexplorer.infrastructure.error.dto.UserNotFoundErrorDto;
 import com.example.gitrepoexplorer.infrastructure.error.exceptions.UserNotFoundException;
@@ -22,6 +24,14 @@ public class GitRepoControllerErrorHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new UserNotFoundErrorDto(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(RepositoryNotFoundException.class)
+    public ResponseEntity<RepositoryNotFoundExceptionDto> handleRepositoryNotFoundException(RepositoryNotFoundException exception) {
+        log.warn("RepositoryNotFoundException thrown while accesing database");
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new RepositoryNotFoundExceptionDto(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
     }
 
     @ExceptionHandler(UnsupportedMediaTypeException.class)
