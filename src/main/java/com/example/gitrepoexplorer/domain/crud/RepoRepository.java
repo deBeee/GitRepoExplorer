@@ -1,6 +1,5 @@
-package com.example.gitrepoexplorer.infrastructure.domain.repository;
+package com.example.gitrepoexplorer.domain.crud;
 
-import com.example.gitrepoexplorer.infrastructure.domain.model.Repo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +8,12 @@ import org.springframework.data.repository.Repository;
 import java.util.List;
 import java.util.Optional;
 
-public interface RepoRepository extends Repository<Repo, Long> {
+interface RepoRepository extends Repository<Repo, Long> {
 
-    @Query("SELECT r FROM Repo r")
+    @Query("""
+            SELECT r FROM Repo r
+            join fetch r.branches
+            """)
     List<Repo> findAll(Pageable pageable);
 
     @Query("SELECT r FROM Repo r WHERE r.id = :id")
@@ -26,7 +28,11 @@ public interface RepoRepository extends Repository<Repo, Long> {
     void deleteAll();
 
     @Modifying
-    @Query("UPDATE Repo r SET r.owner = :#{#newRepo.owner}, r.name = :#{#newRepo.name} WHERE r.id = :id")
+    @Query("""
+            UPDATE Repo r
+            SET r.owner = :#{#newRepo.owner}, r.name = :#{#newRepo.name}, r.branches = :#{#newRepo.branches}
+            WHERE r.id = :id
+            """)
     void updateById(Long id, Repo newRepo);
 
     Repo save(Repo repo);

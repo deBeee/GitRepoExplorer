@@ -11,12 +11,9 @@ import java.util.List;
 @FeignClient(value = "git-hub-client")
 public interface GitHubProxy {
 
-    //GET https://api.github.com/users/USERNAME/repos
     @GetMapping("/users/{username}/repos")
     List<GitHubRepositoryDto> fetchUserRepositioriesInfo(@PathVariable String username);
 
-
-    //GET https://api.github.com/repos/kalqa/03-open-feign/branches
     @GetMapping("/repos/{username}/{repositoryname}/branches")
     List<RepositoryBranchesDto> fetchUserRepositoryBranchesInfo(
             @PathVariable String username,

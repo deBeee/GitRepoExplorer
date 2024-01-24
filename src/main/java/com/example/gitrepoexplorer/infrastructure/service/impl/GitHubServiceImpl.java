@@ -1,12 +1,13 @@
-package com.example.gitrepoexplorer.service.impl;
+package com.example.gitrepoexplorer.infrastructure.service.impl;
 
+import com.example.gitrepoexplorer.domain.crud.RepoAdder;
 import com.example.gitrepoexplorer.infrastructure.controller.dto.response.UserRepositoriesAndBranchesResponseDto;
-import com.example.gitrepoexplorer.infrastructure.domain.model.Repo;
-import com.example.gitrepoexplorer.infrastructure.domain.service.RepoAdder;
+import com.example.gitrepoexplorer.infrastructure.controller.dto.response.UserRepositoryAndBranchesResponseDto;
+import com.example.gitrepoexplorer.domain.crud.Repo;
 import com.example.gitrepoexplorer.infrastructure.error.exceptions.UserNotFoundException;
 import com.example.gitrepoexplorer.infrastructure.proxy.GitHubProxy;
 import com.example.gitrepoexplorer.infrastructure.proxy.dto.response.GitHubRepositoryDto;
-import com.example.gitrepoexplorer.service.GitHubService;
+import com.example.gitrepoexplorer.infrastructure.service.GitHubService;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,18 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.gitrepoexplorer.infrastructure.mappers.Mappers.mapRepositoryBranchesDtoListToBranchList;
-import static com.example.gitrepoexplorer.infrastructure.mappers.Mappers.mapGitHubRepositoryDtoToRepo;
+import static com.example.gitrepoexplorer.infrastructure.mappers.Mappers.mapListOfUserRepositoriesAndBranchesResponseDtoToListOfRepo;
 
 @Service
 @AllArgsConstructor
 @Log4j2
 public class GitHubServiceImpl implements GitHubService {
 
-    GitHubProxy gitHubClient;
+    private final GitHubProxy gitHubClient;
+    private final RepoAdder repoAdder;
 
-    RepoAdder repoAdder;
-
-    public List<UserRepositoriesAndBranchesResponseDto> fetchUserRepositories(String username){
+    public UserRepositoriesAndBranchesResponseDto fetchUserRepositories(String username){
         List<GitHubRepositoryDto> userRepositoriesResponseDto = new ArrayList<>();
         try {
                 userRepositoriesResponseDto = gitHubClient.fetchUserRepositioriesInfo(username);
@@ -40,20 +40,22 @@ public class GitHubServiceImpl implements GitHubService {
             }
         }
 
-        addReposToDatabase(mapGitHubRepositoryDtoToRepo(userRepositoriesResponseDto));
-
-        return userRepositoriesResponseDto.stream()
+        List<UserRepositoryAndBranchesResponseDto> repos = userRepositoriesResponseDto.stream()
                 .filter(repository -> !repository.fork())
-                .map(repository -> new UserRepositoriesAndBranchesResponseDto(
+                .map(repository -> new UserRepositoryAndBranchesResponseDto(
                         repository.name(),
                         repository.owner().login(),
                         mapRepositoryBranchesDtoListToBranchList(
                                 gitHubClient.fetchUserRepositoryBranchesInfo(username, repository.name())
-                )))
+                        )))
                 .toList();
+
+        addReposToDatabase(mapListOfUserRepositoriesAndBranchesResponseDtoToListOfRepo(repos));
+
+        return new UserRepositoriesAndBranchesResponseDto(repos);
     }
 
     private void addReposToDatabase(List<Repo> repositories){
-        repoAdder.addAll(repositories);
+        this.repoAdder.addAll(repositories);
     }
 }

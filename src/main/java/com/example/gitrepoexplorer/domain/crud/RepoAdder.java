@@ -1,8 +1,8 @@
-package com.example.gitrepoexplorer.infrastructure.domain.service;
+package com.example.gitrepoexplorer.domain.crud;
 
 
-import com.example.gitrepoexplorer.infrastructure.domain.model.Repo;
-import com.example.gitrepoexplorer.infrastructure.domain.repository.RepoRepository;
+import com.example.gitrepoexplorer.domain.crud.Repo;
+import com.example.gitrepoexplorer.domain.crud.RepoRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

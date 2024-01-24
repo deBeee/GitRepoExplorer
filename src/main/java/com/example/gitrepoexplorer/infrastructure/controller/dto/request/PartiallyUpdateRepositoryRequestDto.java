@@ -1,4 +1,8 @@
 package com.example.gitrepoexplorer.infrastructure.controller.dto.request;
 
-public record PartiallyUpdateRepositoryRequestDto(String owner, String name) {
+import com.example.gitrepoexplorer.domain.crud.dto.BranchDto;
+
+import java.util.Set;
+
+public record PartiallyUpdateRepositoryRequestDto(String owner, String name, Set<BranchDto> branches) {
 }

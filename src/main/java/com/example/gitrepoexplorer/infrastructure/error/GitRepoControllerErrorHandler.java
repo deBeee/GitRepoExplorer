@@ -1,8 +1,10 @@
 package com.example.gitrepoexplorer.infrastructure.error;
 
 import com.example.gitrepoexplorer.infrastructure.controller.GitRepoController;
+import com.example.gitrepoexplorer.infrastructure.error.dto.BranchNotFoundExceptionDto;
 import com.example.gitrepoexplorer.infrastructure.error.dto.RepositoryNotFoundExceptionDto;
 import com.example.gitrepoexplorer.infrastructure.error.dto.UnsupportedMediaTypeErrorDto;
+import com.example.gitrepoexplorer.infrastructure.error.exceptions.BranchNotFoundException;
 import com.example.gitrepoexplorer.infrastructure.error.exceptions.RepositoryNotFoundException;
 import com.example.gitrepoexplorer.infrastructure.error.exceptions.UnsupportedMediaTypeException;
 import com.example.gitrepoexplorer.infrastructure.error.dto.UserNotFoundErrorDto;
@@ -26,6 +28,13 @@ public class GitRepoControllerErrorHandler {
                 .body(new UserNotFoundErrorDto(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
     }
 
+    @ExceptionHandler(BranchNotFoundException.class)
+    public ResponseEntity<BranchNotFoundExceptionDto> handleRepositoryNotFoundException(BranchNotFoundException exception) {
+        log.warn("BranchNotFoundException thrown while accesing database");
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new BranchNotFoundExceptionDto(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
+    }
     @ExceptionHandler(RepositoryNotFoundException.class)
     public ResponseEntity<RepositoryNotFoundExceptionDto> handleRepositoryNotFoundException(RepositoryNotFoundException exception) {
         log.warn("RepositoryNotFoundException thrown while accesing database");

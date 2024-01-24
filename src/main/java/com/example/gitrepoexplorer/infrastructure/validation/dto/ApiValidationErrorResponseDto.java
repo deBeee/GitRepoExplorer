@@ -1,4 +1,4 @@
-package com.example.gitrepoexplorer.validation.dto;
+package com.example.gitrepoexplorer.infrastructure.validation.dto;
 
 import org.springframework.http.HttpStatus;
 

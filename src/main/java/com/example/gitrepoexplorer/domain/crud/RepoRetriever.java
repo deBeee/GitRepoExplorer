@@ -1,7 +1,5 @@
-package com.example.gitrepoexplorer.infrastructure.domain.service;
+package com.example.gitrepoexplorer.domain.crud;
 
-import com.example.gitrepoexplorer.infrastructure.domain.model.Repo;
-import com.example.gitrepoexplorer.infrastructure.domain.repository.RepoRepository;
 import com.example.gitrepoexplorer.infrastructure.error.exceptions.RepositoryNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,9 +11,9 @@ import java.util.List;
 @Log4j2
 @Service
 @AllArgsConstructor
-public class RepoRetriever {
+class RepoRetriever {
 
-    RepoRepository repoRepository;
+    private final RepoRepository repoRepository;
 
     public List<Repo> findAll(Pageable pageable) {
         log.info("Retrieving all paged repositories");
@@ -34,4 +32,5 @@ public class RepoRetriever {
             throw new RepositoryNotFoundException("repository with given id= %d not found".formatted(id));
         }
     }
+
 }

@@ -1,6 +1,6 @@
-package com.example.gitrepoexplorer.validation;
+package com.example.gitrepoexplorer.infrastructure.validation;
 
-import com.example.gitrepoexplorer.validation.dto.ApiValidationErrorResponseDto;
+import com.example.gitrepoexplorer.infrastructure.validation.dto.ApiValidationErrorResponseDto;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

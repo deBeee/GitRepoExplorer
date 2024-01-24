@@ -1,0 +1,5 @@
+ALTER TABLE branch
+    ADD version BIGINT DEFAULT 0 NOT NULL;
+
+ALTER TABLE repo
+    ADD version BIGINT DEFAULT 0 NOT NULL;
