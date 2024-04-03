@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Repo extends BaseEntity {
+class Repo extends BaseEntity {
 
     @Id
     @GeneratedValue(generator = "repo_id_gen", strategy = GenerationType.SEQUENCE)

@@ -1,9 +1,8 @@
 package com.example.gitrepoexplorer.infrastructure.service.impl;
 
-import com.example.gitrepoexplorer.domain.crud.RepoAdder;
+import com.example.gitrepoexplorer.domain.crud.CrudFacade;
 import com.example.gitrepoexplorer.infrastructure.controller.dto.response.UserRepositoriesAndBranchesResponseDto;
 import com.example.gitrepoexplorer.infrastructure.controller.dto.response.UserRepositoryAndBranchesResponseDto;
-import com.example.gitrepoexplorer.domain.crud.Repo;
 import com.example.gitrepoexplorer.infrastructure.error.exceptions.UserNotFoundException;
 import com.example.gitrepoexplorer.infrastructure.proxy.GitHubProxy;
 import com.example.gitrepoexplorer.infrastructure.proxy.dto.response.GitHubRepositoryDto;
@@ -17,8 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.gitrepoexplorer.infrastructure.mappers.Mappers.mapRepositoryBranchesDtoListToBranchList;
-import static com.example.gitrepoexplorer.infrastructure.mappers.Mappers.mapListOfUserRepositoriesAndBranchesResponseDtoToListOfRepo;
+import static com.example.gitrepoexplorer.domain.crud.Mappers.mapRepositoryBranchesDtoListToBranchDtoList;
 
 @Service
 @AllArgsConstructor
@@ -26,7 +24,7 @@ import static com.example.gitrepoexplorer.infrastructure.mappers.Mappers.mapList
 public class GitHubServiceImpl implements GitHubService {
 
     private final GitHubProxy gitHubClient;
-    private final RepoAdder repoAdder;
+    private final CrudFacade crudFacade;
 
     public UserRepositoriesAndBranchesResponseDto fetchUserRepositories(String username){
         List<GitHubRepositoryDto> userRepositoriesResponseDto = new ArrayList<>();
@@ -45,17 +43,17 @@ public class GitHubServiceImpl implements GitHubService {
                 .map(repository -> new UserRepositoryAndBranchesResponseDto(
                         repository.name(),
                         repository.owner().login(),
-                        mapRepositoryBranchesDtoListToBranchList(
+                        mapRepositoryBranchesDtoListToBranchDtoList(
                                 gitHubClient.fetchUserRepositoryBranchesInfo(username, repository.name())
                         )))
                 .toList();
 
-        addReposToDatabase(mapListOfUserRepositoriesAndBranchesResponseDtoToListOfRepo(repos));
+        addReposToDatabase(repos);
 
         return new UserRepositoriesAndBranchesResponseDto(repos);
     }
 
-    private void addReposToDatabase(List<Repo> repositories){
-        this.repoAdder.addAll(repositories);
+    private void addReposToDatabase(List<UserRepositoryAndBranchesResponseDto> repositories){
+        this.crudFacade.addAllRepos(repositories);
     }
 }

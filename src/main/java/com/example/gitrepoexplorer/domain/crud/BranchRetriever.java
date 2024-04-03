@@ -24,5 +24,4 @@ class BranchRetriever {
                 .orElseThrow(() -> new BranchNotFoundException("Branch with id=%d not found".formatted(id)));
     }
 
-
 }

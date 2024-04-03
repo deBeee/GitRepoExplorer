@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Branch extends BaseEntity {
+class Branch extends BaseEntity {
 
     @Id
     @GeneratedValue(generator = "branch_id_gen", strategy = GenerationType.SEQUENCE)

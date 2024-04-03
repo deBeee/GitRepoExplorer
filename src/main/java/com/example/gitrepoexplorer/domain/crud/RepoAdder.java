@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Transactional
-public class RepoAdder {
+class RepoAdder {
 
     private final RepoRepository repoRepository;
 

@@ -1,7 +1,5 @@
-package com.example.gitrepoexplorer.infrastructure.mappers;
+package com.example.gitrepoexplorer.domain.crud;
 
-import com.example.gitrepoexplorer.domain.crud.Branch;
-import com.example.gitrepoexplorer.domain.crud.Repo;
 import com.example.gitrepoexplorer.domain.crud.dto.BranchDto;
 import com.example.gitrepoexplorer.domain.crud.dto.RepoDto;
 import com.example.gitrepoexplorer.infrastructure.controller.dto.request.BranchRequestDto;
@@ -20,13 +18,13 @@ import java.util.stream.Collectors;
 
 public interface Mappers {
 
-    static Set<BranchDto> mapRepositoryBranchesDtoListToBranchList(List<RepositoryBranchesDto> repositoryBranchesDto) {
+    static Set<BranchDto> mapRepositoryBranchesDtoListToBranchDtoList(List<RepositoryBranchesDto> repositoryBranchesDto) {
         return repositoryBranchesDto.stream()
                 .map(branchesDto -> new BranchDto(branchesDto.name(), branchesDto.commit().sha()))
                 .collect(Collectors.toSet());
     }
 
-    static Set<Branch> mapSetOfBranchDtoToSetOfBranch(Set<BranchDto> branchDtos) {
+    private static Set<Branch> mapSetOfBranchDtoToSetOfBranch(Set<BranchDto> branchDtos) {
         if (branchDtos == null) return new HashSet<>();
         return branchDtos.stream()
                 .map(dto -> new Branch(dto.name(), dto.lastCommitSha()))
@@ -60,7 +58,7 @@ public interface Mappers {
         return new UserRepositoriesDto(userRepositories);
     }
 
-    static RepoDto mapRepoToUserRepositoryFromDatabaseDto(Repo repository) {
+    static RepoDto mapRepoToRepoDto(Repo repository) {
         return new RepoDto(
                 repository.getId(), repository.getOwner(), repository.getName(),
                 mapSetOfBranchToSetOfBranchDto(repository.getBranches()));
@@ -76,7 +74,7 @@ public interface Mappers {
     }
 
     static PartiallyUpdateRepositoryResponseDto mapRepoToPartiallyUpdateRepositoryResponseDto(Repo repo) {
-        return new PartiallyUpdateRepositoryResponseDto(repo);
+        return new PartiallyUpdateRepositoryResponseDto(mapRepoToRepoDto(repo));
     }
 
     static Branch mapBranchRequestDtoToBranch(BranchRequestDto dto) {
