@@ -112,17 +112,17 @@ public class GitRepoController {
                 .body(branches);
     }
 
-    @DeleteMapping(path = "database/branch/{branchId}")
-    public ResponseEntity<Void> deleteBranchByBranchId(@PathVariable Long branchId){
-        this.crudFacade.deleteBranchByBranchId(branchId);
+    @DeleteMapping(path = "database/branch/{id}")
+    public ResponseEntity<Void> deleteBranchByBranchId(@PathVariable Long id){
+        this.crudFacade.deleteBranchByBranchId(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(path = "database/branch/{branchId}")
+    @PatchMapping(path = "database/branch/{id}")
     public ResponseEntity<BranchDto> partiallyUpdateBranchByBranchId(
-            @PathVariable Long branchId, @RequestBody @Valid PartiallyUpdateBranchRequestDto requestDto) {
+            @PathVariable Long id, @RequestBody @Valid PartiallyUpdateBranchRequestDto requestDto) {
         BranchDto updatedBranch = this.crudFacade.partiallyUpdateBranchById(
-                branchId, requestDto);
+                id, requestDto);
         return ResponseEntity.ok(updatedBranch);
     }
 
