@@ -2,9 +2,9 @@
 # GitRepoExplorer
 
 
-### CRUD application that retrieves information about repositories and their branches for a given GitHub user
+### Application that retrieves information about repositories and their branches for a given GitHub user
 
-Spring Boot application specializing in CRUD operations that follows REST principles. The application exposes an endpoint enabling clients to send requests containing a GitHub username.
+The application exposes an endpoint enabling clients to send requests containing a GitHub username.
 Using the OpenFeign framework, it fetches information about the user's repositories from the GitHub API and filters out only the non-forked ones.
 Then, the application persists this data in the PostreSQL database and returns a response to the client with the gathered information.
 The application supports diverse HTTP requests, allowing manipulation of data stored in the database using Hibernate.
