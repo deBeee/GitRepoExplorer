@@ -2,12 +2,12 @@
 # GitRepoExplorer
 
 
-### Application that retrieves information about repositories and their branches for a given GitHub user
+### Application for effortless repository and branch management!
 
 The application exposes an endpoint enabling clients to send requests containing a GitHub username.
 Using the OpenFeign framework, it fetches information about the user's repositories from the GitHub API and filters out only the non-forked ones.
-Then, the application persists this data in the PostreSQL database and returns a response to the client with the gathered information.
-The application supports diverse HTTP requests, allowing manipulation of data stored in the database using Hibernate.
+Then, the application persists this data in the PostreSQL database and returns a response to the client with gathered information.
+The application supports diverse HTTP requests, allowing manipulation of data stored in the database such as adding, deleting, (partially) updating and retrieving.
 There are two primary entities: Repository (Repo) and corresponding to this repository branches (Branch) with relation One-To-Many between them.
 Application also utilizes Flyway for managing database migrations.
 
@@ -16,9 +16,10 @@ Application also utilizes Flyway for managing database migrations.
 - Spring Boot RESTful API 
 - Follows Facade design pattern
 - Built on a modular monolith architecture
+- Stores data in SQL database (PostreSQL)
+- Uses Hibernate with query optimization
 - Handles thrown exceptions using exception handlers
 - Establishes a clear separation between entities and DTOs
-- Stores data in SQL database (PostreSQL)
 - Fetches data from API using OpenFeign framework
 - Utilizes Flyway for database migration
 
