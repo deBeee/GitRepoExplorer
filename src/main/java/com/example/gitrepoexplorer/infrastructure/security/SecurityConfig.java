@@ -7,10 +7,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -29,6 +34,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(corsConfigurerCustomizer())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests
@@ -50,5 +56,20 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .build();
+    }
+
+    public Customizer<CorsConfigurer<HttpSecurity>> corsConfigurerCustomizer() {
+        return c -> {
+            CorsConfigurationSource source = request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(
+                        List.of("http://localhost:3000"));
+                config.setAllowedMethods(
+                        List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+                config.setAllowedHeaders(List.of("*"));
+                return config;
+            };
+            c.configurationSource(source);
+        };
     }
 }
