@@ -1,12 +1,14 @@
 package com.example.gitrepoexplorer.infrastructure.security;
 
 import com.example.gitrepoexplorer.domain.user.User;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Log4j2
 class SecurityUser implements UserDetails {
 
     private final User user;

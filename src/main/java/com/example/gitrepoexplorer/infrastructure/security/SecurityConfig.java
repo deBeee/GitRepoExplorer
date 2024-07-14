@@ -7,8 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -18,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public UserDetailsManager userDetailsService(UserRepository userRepository) {
-        return new UserDetailsServiceImpl(userRepository, passwordEncoder());
+    public UserDetailsManager userDetailsManager(UserRepository userRepository) {
+        return new UserDetailsManagerImpl(userRepository, passwordEncoder());
     }
 
     @Bean
@@ -42,7 +40,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/database/repos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/database/branch/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/github/repos/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/database/repo/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/database/repo/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/database/repo/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/database/repo/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/database/branch/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/database/branch/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/database/repos").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .build();

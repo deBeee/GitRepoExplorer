@@ -13,9 +13,10 @@ import java.util.List;
 
     @AllArgsConstructor
 @Log4j2
-class UserDetailsServiceImpl implements UserDetailsManager {
+class UserDetailsManagerImpl implements UserDetailsManager {
 
     public static final String DEFAULT_USER_ROLE = "ROLE_USER";
+    public static final String ADMIN_ROLE = "ROLE_ADMIN";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -38,7 +39,7 @@ class UserDetailsServiceImpl implements UserDetailsManager {
                 user.getUsername(),
                 encodedPassword,
                 true,
-                List.of(DEFAULT_USER_ROLE)
+                List.of(ADMIN_ROLE, DEFAULT_USER_ROLE)
         );
         User savedUser = userRepository.save(createdUser);
         log.info("Saved user with Id: " + savedUser.getId());
