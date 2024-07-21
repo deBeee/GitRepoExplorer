@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import java.security.KeyPair;
+import java.security.interfaces.RSAPrivateKey;
 import java.time.*;
 
 @Component
@@ -19,11 +21,12 @@ class JwtAuthenticator {
     private final AuthenticationManager authenticationManager;
     private final JwtConfigurationProperties properties;
     private final Clock clock;
-
+    private final KeyPair keyPair;
 
     //by passing UsernamePasswordAuthenticationToken to authenticate method in AuthenticationManager
-    //it will automatically choose the default DaoAuthenticationProvider which will execute our
-    //customized loadByUsername method along with PasswordEncoder to get user from database
+    //it will automatically choose the DaoAuthenticationProvider
+    //(because provided token is type of UsernamePasswordAuthenticationToken)
+    //which will execute our customized loadByUsername method along with PasswordEncoder to get user from database
     //and authentacate it or not depending on what loadByUsername method returns.
     //So in Aunthentication object we have what loadByUsername method returns
     public String authenticateAndGenerateToken(String username, String password) {
@@ -34,7 +37,8 @@ class JwtAuthenticator {
 
     private String createToken(SecurityUser user) {
         String secretKey = properties.secret();
-        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+//        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        Algorithm algorithm = Algorithm.RSA256(null, (RSAPrivateKey) keyPair.getPrivate());
         Instant now = LocalDateTime.now(clock).toInstant(ZoneOffset.UTC);
         Instant expiresAt = now.plus(Duration.ofMinutes(properties.expirationMinutes()));
         String issuer = properties.issuer();
