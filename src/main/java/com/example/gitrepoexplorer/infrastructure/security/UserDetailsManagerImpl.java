@@ -11,7 +11,7 @@ import org.springframework.security.provisioning.UserDetailsManager;
 
 import java.util.List;
 
-    @AllArgsConstructor
+@AllArgsConstructor
 @Log4j2
 class UserDetailsManagerImpl implements UserDetailsManager {
 

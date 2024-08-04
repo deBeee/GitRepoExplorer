@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
@@ -47,7 +46,7 @@ class JwtAuthenticator {
                 .withIssuedAt(now)
                 .withExpiresAt(expiresAt)
                 .withIssuer(issuer)
-                .withClaim("roles", user.getAuthoritiesAsString())
+                .withClaim("roles", user.getAuthoritiesAsList())
                 .sign(algorithm);
     }
 }
