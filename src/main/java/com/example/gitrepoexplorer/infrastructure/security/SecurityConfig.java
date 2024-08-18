@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .cors(corsConfigurerCustomizer())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login(Customizer.withDefaults())
+//                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
@@ -52,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/users/register/**").permitAll()
                         .requestMatchers("/login/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/database/repo/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/database/repos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/database/repos").authenticated() //testing purposes
                         .requestMatchers(HttpMethod.GET, "/database/branch/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/github/repos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/database/repo/**").hasRole("ADMIN")
