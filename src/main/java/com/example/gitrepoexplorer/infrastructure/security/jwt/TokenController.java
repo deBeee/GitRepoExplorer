@@ -12,6 +12,12 @@ public class TokenController {
     @GetMapping("/token")
     public ResponseEntity<JwtTokenResponseDto> getToken(Authentication authentication) {
         if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
+
+            oidcUser.getUserInfo().getClaim("roles"); // these we are setting it in CustomOidcUserService
+            // - contain roles from database connected with user with email which was in token from Google
+
+            oidcUser.getAuthorities(); // we are setting it in CustomOidcUserService - all authorities
+
             //this Google token doesn't contain user roles yet - no authorization can be performed
             String token = oidcUser.getIdToken().getTokenValue();
             return ResponseEntity.ok(new JwtTokenResponseDto(token));

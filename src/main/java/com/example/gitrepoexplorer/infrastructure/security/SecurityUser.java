@@ -26,7 +26,7 @@ public class SecurityUser implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getAuthoritiesAsList(){
+    public List<String> getAuthoritiesAsStringList(){
         return user.getAuthorities().stream().toList();
     }
 
