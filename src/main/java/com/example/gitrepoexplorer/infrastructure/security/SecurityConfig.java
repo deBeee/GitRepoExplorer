@@ -1,7 +1,7 @@
 package com.example.gitrepoexplorer.infrastructure.security;
 
 import com.example.gitrepoexplorer.domain.user.UserRepository;
-import com.example.gitrepoexplorer.infrastructure.security.jwt.JwtAuthTokenFilter;
+import com.example.gitrepoexplorer.infrastructure.security.jwt.CustomOidcUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,12 +11,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -24,6 +23,8 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
+    private static final String ADMIN_ROLE = "ADMIN";
 
     @Bean
     public UserDetailsManager userDetailsManager(UserRepository userRepository) {
@@ -40,31 +41,32 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthTokenFilter jwtAuthTokenFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationSuccessHandler successHandler, CustomOidcUserService customOidcUserService) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(corsConfigurerCustomizer())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(c -> c.successHandler(successHandler)
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService)))
+//                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/users/register/**").permitAll()
-                        .requestMatchers("/login/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/database/repo/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/database/repos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/database/repos").authenticated() //testing purposes
+                        .requestMatchers(HttpMethod.GET, "/message").hasRole(ADMIN_ROLE) //testing purposes
                         .requestMatchers(HttpMethod.GET, "/database/branch/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/github/repos/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/database/repo/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/database/repo/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/database/repo/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/database/repo/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/database/branch/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/database/branch/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/database/repos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/database/repo/**").hasRole(ADMIN_ROLE)
+                        .requestMatchers(HttpMethod.PUT, "/database/repo/**").hasRole(ADMIN_ROLE)
+                        .requestMatchers(HttpMethod.PATCH, "/database/repo/**").hasRole(ADMIN_ROLE)
+                        .requestMatchers(HttpMethod.DELETE, "/database/repo/**").hasRole(ADMIN_ROLE)
+                        .requestMatchers(HttpMethod.PATCH, "/database/branch/**").hasRole(ADMIN_ROLE)
+                        .requestMatchers(HttpMethod.DELETE, "/database/branch/**").hasRole(ADMIN_ROLE)
+                        .requestMatchers(HttpMethod.DELETE, "/database/repos").hasRole(ADMIN_ROLE)
                         .anyRequest().authenticated()
                 )
                 .build();
